@@ -21,13 +21,5 @@ configurations {
 }
 
 dependencies {
-    bungeeAPI 'net.md-5:bungeecord-api:1.14-SNAPSHOT'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'commons-io:commons-io:2.4'
-}
-
-jar {
-    from {
-        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+    bungeeAPI 'net.md-5:bungeecord-api:1.15-SNAPSHOT'
 }

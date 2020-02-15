@@ -1,4 +1,4 @@
 name: BungeeWhitelist
 main: com.hadroncfy.bungeewhitelist.WhitelistPlugin
-version: 1.0
-author: hadroncfy
+version: 1.1
+author: hadroncfy, extclp
