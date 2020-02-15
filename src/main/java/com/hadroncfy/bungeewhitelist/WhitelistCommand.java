@@ -113,7 +113,9 @@ public class WhitelistCommand extends Command implements TabExecutor {
                     GameProfile profile = plugin.getWhitelist().removeByName(args[1]);
                     if (profile != null){
                         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(profile.uuid);
-                        player.disconnect(new TextComponent(plugin.kickMessage));
+                        if(player != null){
+                            player.disconnect(new TextComponent(plugin.kickMessage));
+                        }
                         plugin.broadcast(new TextComponent("Removed " + args[1] + " from white list."));
                     }
                     else {
