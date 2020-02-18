@@ -17,7 +17,8 @@ public class WhitelistCommand extends Command implements TabExecutor {
     private WhitelistPlugin plugin;
 
     public WhitelistCommand(WhitelistPlugin plugin) {
-        super("bwhitelist", "bungeewhitelist.use");
+        super("bwhitelist", "bungeewhitelist.use",
+                plugin.enableWhitelistCommand ? new String[]{"whitelist"} : new String[0]);
         this.plugin = plugin;
     }
 

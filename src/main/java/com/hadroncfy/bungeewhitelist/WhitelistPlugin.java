@@ -20,6 +20,7 @@ import java.io.IOException;
 
 public class WhitelistPlugin extends Plugin implements Listener {
     public boolean enabled = false;
+    public boolean enableWhitelistCommand = false;
     public String kickMessage = "Vous n'étes pas dans la liste blanche!";
 
     private Whitelist whitelist;
@@ -69,6 +70,7 @@ public class WhitelistPlugin extends Plugin implements Listener {
 
         Configuration config = YamlConfiguration.getProvider(YamlConfiguration.class).load(configFile);
         enabled = config.getBoolean("enabled");
+        enableWhitelistCommand = config.getBoolean("enableWhitelistCommand");
         kickMessage = config.getString("kick-message");
     }
  
@@ -78,6 +80,7 @@ public class WhitelistPlugin extends Plugin implements Listener {
         try {
             Configuration config = new Configuration();
             config.set("enabled", enabled);
+            config.set("enableWhitelistCommand", enableWhitelistCommand);
             config.set("kick-message", kickMessage);
             YamlConfiguration.getProvider(YamlConfiguration.class).save(config, configFile);
         }
