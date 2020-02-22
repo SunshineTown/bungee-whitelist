@@ -3,11 +3,8 @@ package com.hadroncfy.bungeewhitelist;
 import com.hadroncfy.bungeewhitelist.api.GameProfile;
 import com.hadroncfy.bungeewhitelist.api.MinecraftAPI;
 import com.hadroncfy.bungeewhitelist.api.Whitelist;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -74,7 +71,7 @@ public class WhitelistPlugin extends Plugin implements Listener {
         kickMessage = config.getString("kick-message");
     }
  
-    private void saveConfig(){
+    public void saveConfig(){
         File configFile = new File(getDataFolder(), "config.yml");
         configFile.getParentFile().mkdirs();
         try {
@@ -104,11 +101,5 @@ public class WhitelistPlugin extends Plugin implements Listener {
 
     public GameProfile createUUID(String name) throws IOException{
         return getProxy().getConfig().isOnlineMode() ? MinecraftAPI.getUUIDByName(name) : MinecraftAPI.getOfflineUUID(name);
-    }
-
-    public void broadcast(BaseComponent c){
-        for (ProxiedPlayer player: getProxy().getPlayers()){
-            player.sendMessage(ChatMessageType.CHAT, c);
-        }
     }
 }

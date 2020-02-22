@@ -49,15 +49,16 @@ public class Whitelist {
         return false;
     }
 
-    public void update(GameProfile profile){
+    public GameProfile update(GameProfile profile){
         for (GameProfile p : whitelist) {
             if(profile.uuid.equals(p.uuid)){
                 whitelist.remove(p);
                 whitelist.add(profile);
-                return;
+                return profile;
             }
         }
         whitelist.add(profile);
+        return null;
     }
 
     private UUID getUUID(String name){

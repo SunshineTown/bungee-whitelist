@@ -61,18 +61,20 @@ public class WhitelistCommand extends Command implements TabExecutor {
             switch (args[0]) {
                 case "on":
                     plugin.enabled = true;
-                    plugin.broadcast(new TextComponent("White list is now enabled"));
+                    plugin.getProxy().broadcast(new TextComponent("White list is now enabled"));
+                    plugin.getProxy().getScheduler().runAsync(plugin, () -> plugin.saveConfig());
                     return;
                 case "off":
                     plugin.enabled = false;
-                    plugin.broadcast(new TextComponent("White list is now disabled"));
+                    plugin.getProxy().broadcast(new TextComponent("White list is now disabled"));
+                    plugin.getProxy().getScheduler().runAsync(plugin, () -> plugin.saveConfig());
                     return;
                 case "reload":
                     try {
                         plugin.getWhitelist().loadWhitelist();
-                        plugin.broadcast(new TextComponent("Reloaded whitelist"));
+                        plugin.getProxy().broadcast(new TextComponent("Reloaded whitelist"));
                     } catch (IOException e) {
-                        plugin.broadcast(new TextComponent("Failed reload whitelist"));
+                        plugin.getProxy().broadcast(new TextComponent("Failed reload whitelist"));
                         e.printStackTrace();
                     }
                     return;
@@ -94,13 +96,18 @@ public class WhitelistCommand extends Command implements TabExecutor {
         } else if (args.length == 2) {
             switch (args[0]){
                 case "add":
-                    new Thread(() -> {
+                    plugin.getProxy().getScheduler().runAsync(plugin, () -> {
                         try {
                             GameProfile profile = plugin.createUUID(args[1]);
                             if (profile != null){
-                                plugin.getWhitelist().update(profile);
-                                sender.sendMessage(new TextComponent("Done"));
-                                plugin.broadcast(new TextComponent("Added " + profile.name + "(" + profile.uuid + ") to white list."));
+                                GameProfile oldProfile = plugin.getWhitelist().update(profile);
+                                if(oldProfile != null){
+                                    sender.sendMessage(new TextComponent("Player " + args[1] + " is already whitelisted"));
+                                } else {
+                                    sender.sendMessage(new TextComponent("Done"));
+                                    plugin.getProxy().broadcast(new TextComponent("Added " + profile.name + "(" + profile.uuid + ") to white list."));
+                                    plugin.getWhitelist().saveWhitelist();
+                                }
                             } else {
                                 sender.sendMessage(new TextComponent("Player " + args[1] + " not found."));
                             }
@@ -108,16 +115,23 @@ public class WhitelistCommand extends Command implements TabExecutor {
                             e.printStackTrace();
                             sender.sendMessage(new TextComponent("Failed to retrieve UUID."));
                         }
-                    }).start();
+                    });
                     return;
                 case "remove":
                     GameProfile profile = plugin.getWhitelist().removeByName(args[1]);
                     if (profile != null){
                         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(profile.uuid);
-                        if(player != null){
+                        if(player != null) {
                             player.disconnect(new TextComponent(plugin.kickMessage));
                         }
-                        plugin.broadcast(new TextComponent("Removed " + args[1] + " from white list."));
+                        plugin.getProxy().broadcast(new TextComponent("Removed " + args[1] + " from white list."));
+                        plugin.getProxy().getScheduler().runAsync(plugin, () ->{
+                            try {
+                                plugin.getWhitelist().saveWhitelist();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
                     }
                     else {
                         sender.sendMessage(new TextComponent("Player not in the white list."));
